@@ -1,0 +1,13 @@
+version: '3'
+services:
+  version:
+    image: trilha
+    command: lsb_release -a
+  moo:
+    image: trilha
+    command: apt-get moo
+  cat:
+    image: trilha
+    command: cat /run/file.txt
+    volumes:
+      - ./arquivo.txt:/run/file.txt

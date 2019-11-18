@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler
+  labels:
+    app: crawler
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: crawler
+  template:
+    metadata:
+      labels:
+        app: crawler
+    spec:
+      restartPolicy: Always
+      automountServiceAccountToken: false
+      containers:
+      - name: crawler
+        image: gcr.io/trilhadataeng/crawler:1
+        # args: ["ls", "-l"]
+        args: ["python", "crawler.py", "--topic", "projects/trilhadataeng/topics/barbie", "--headless", "--disable-dev-shm-usage", "--no-sandbox"]        
+        resources:
+          requests:
+            memory: 300Mi
+            cpu: 300m
+          limits:
+            memory: 450Mi
+            cpu: 1
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /credentials/credentials.json
+        volumeMounts:
+          - name: credentials
+            mountPath: "/credentials/"  
+      volumes:
+        - name: credentials
+          secret:
+            secretName: gcpcredential
